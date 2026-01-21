@@ -29,22 +29,22 @@
             max-width: 100%;
         }
         
-        /* Performance optimization for mobile */
-        @media (max-width: 768px) {
-            [data-aos] {
-                pointer-events: auto !important;
-            }
-            /* Disable animations on mobile for better performance */
-            [data-aos].aos-animate {
-                transform: none !important;
-                opacity: 1 !important;
-            }
-        }
-        
         /* Optimize images */
         img {
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+        
+        /* Lightweight mobile animations */
+        @media (max-width: 768px) {
+            [data-aos] {
+                transition-duration: 300ms !important;
+            }
+            /* Simplify animations on mobile - fade only */
+            [data-aos][data-aos-delay] {
+                transition-delay: 0ms !important;
+            }
         }
     </style>
 </head>
@@ -274,23 +274,27 @@
     
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Disable AOS on mobile for better performance
         const isMobile = window.innerWidth <= 768;
         
-        if (!isMobile) {
-            AOS.init({
-                once: true,
-                mirror: false,
-                offset: 30,
-                duration: 600,
-                easing: 'ease-in-out',
-                disable: false
-            });
-        } else {
-            // On mobile, just show elements immediately without animation
-            AOS.init({
-                disable: true,
-                once: true
+        AOS.init({
+            once: true,
+            mirror: false,
+            offset: isMobile ? 20 : 30,
+            duration: isMobile ? 300 : 600,
+            easing: 'ease-out',
+            delay: isMobile ? 0 : undefined,
+            anchorPlacement: 'top-bottom',
+            disable: false
+        });
+        
+        // Convert complex animations to simple fade on mobile
+        if (isMobile) {
+            document.querySelectorAll('[data-aos]').forEach(el => {
+                const aos = el.getAttribute('data-aos');
+                if (aos !== 'fade-up' && aos !== 'fade') {
+                    el.setAttribute('data-aos', 'fade');
+                }
+                el.removeAttribute('data-aos-delay');
             });
         }
     </script>
