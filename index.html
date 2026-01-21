@@ -12,18 +12,39 @@
         html {
             width: 100%;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
         body {
             font-family: system-ui, sans-serif;
             width: 100%;
             margin: 0;
             padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         #frontend{
             font-family: "Consolas", "Courier New", Courier, monospace;
         }
         * {
             max-width: 100%;
+        }
+        
+        /* Performance optimization for mobile */
+        @media (max-width: 768px) {
+            [data-aos] {
+                pointer-events: auto !important;
+            }
+            /* Disable animations on mobile for better performance */
+            [data-aos].aos-animate {
+                transform: none !important;
+                opacity: 1 !important;
+            }
+        }
+        
+        /* Optimize images */
+        img {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
     </style>
 </head>
@@ -253,12 +274,25 @@
     
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({
-            once: true,
-            mirror: false,
-            offset: 50,
-            easing: 'ease-in-out'
-        });
+        // Disable AOS on mobile for better performance
+        const isMobile = window.innerWidth <= 768;
+        
+        if (!isMobile) {
+            AOS.init({
+                once: true,
+                mirror: false,
+                offset: 30,
+                duration: 600,
+                easing: 'ease-in-out',
+                disable: false
+            });
+        } else {
+            // On mobile, just show elements immediately without animation
+            AOS.init({
+                disable: true,
+                once: true
+            });
+        }
     </script>
 </body>
 </html>
